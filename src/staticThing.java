@@ -5,8 +5,8 @@ import javafx.scene.image.ImageView;
 public class staticThing {
     private double x;
     private double y;
-
     private ImageView sprite;
+
     public ImageView getSprite() {
         return this.sprite;
     }
@@ -20,5 +20,8 @@ public class staticThing {
         sprite.setY(this.y);
         sprite.setViewport(new Rectangle2D(x1,y1,length,width));
 
+    }
+    public void modSprite(int x1,int y1,int length, int width) {
+        sprite.setViewport(new Rectangle2D(x1,y1,length,width));
     }
 }
