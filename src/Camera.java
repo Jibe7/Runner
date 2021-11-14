@@ -8,9 +8,9 @@ public class Camera {
     private double a_x;
     private double pos_y=0;
     private double y_prec=0;
-    private double v_y;
-    private double vy_prec;
-    private double a_y;
+    private double v_y=0;
+    private double vy_prec=0;
+    private double a_y=0;
     private double deltaT;
     private double fm=0.7;
     private long pTime=0;
@@ -40,16 +40,18 @@ public class Camera {
     public void update(long time,Hero hero) {
         //x+=1;
         if (pTime==0) pTime=time;
-
         deltaT = 1e-9*(time-pTime);
-        a_x=km*(hero.getX()-100-x_prec)-fm*vx_prec;
-        a_y=1.5*km*(hero.getY()-hero.getPositionY()-y_prec)-fm*vy_prec;
-        v_x=vx_prec+deltaT*a_x;
-        v_y=vy_prec+deltaT*a_y;
-        pos_x=x_prec+deltaT*v_x;
-        pos_y=y_prec+deltaT*v_y;
-        pTime=time;
 
+        a_x=km*(hero.getX()-100-x_prec)-fm*vx_prec;
+        v_x=vx_prec+deltaT*a_x;
+        pos_x=x_prec+deltaT*v_x;
+
+        //a_y=4*km*(hero.getY()-hero.getPositionY()-y_prec)-fm*vy_prec;
+        //v_y=vy_prec+deltaT*a_y;
+       // pos_y=y_prec+deltaT*v_y;
+        pos_y=hero.getY()-hero.getPositionY()-5;
+
+        pTime=time;
 
         if (pos_y<-GameScene.getUpShiftBg()-0.001) {this.y=-GameScene.getUpShiftBg();}
         else if (pos_y>GameScene.getDownShiftBg()-0.001) {this.y=GameScene.getDownShiftBg();}

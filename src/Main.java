@@ -42,7 +42,9 @@ public class Main extends Application {
 
         root.getChildren().add(gs.getbgR().getSprite());
         root.getChildren().add(gs.getbgL().getSprite());
-
+        for (int j=0;j<gs.getFoes().size();j++) {
+            root.getChildren().add(gs.getFoes().get(j).getSprite());
+        }
         root.getChildren().add(gs.getHero().getSprite());
 
         //Image img = new Image("file:heros.png");

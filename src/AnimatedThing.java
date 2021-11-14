@@ -13,6 +13,7 @@ abstract class AnimatedThing {
 
 
 
+
     public AnimatedThing(double xpos, double ypos, String filename, Integer x1, Integer y1, Integer length, Integer width) {
         this.x=xpos;
         this.y=ypos;
