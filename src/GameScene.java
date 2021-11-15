@@ -10,6 +10,8 @@ public class GameScene extends Scene {
     private static double upShiftBg = 50; //on affiche le background 'coupé' de façon à ce que lorsqu'on bouge la caméra on ne voit pas le blanc qu'il y a en haut de la fenêtre
     private static double downShiftBg = 10; // même idée mais pour ne pas voir le blanc qu'il y a en bas de la fenêtre
     private ArrayList<Foe> foes = new ArrayList<Foe>();
+    private Foe heart1;
+    private Foe heart2;
     private int bg1Length;
     private int bg1Width;
     private int bg2Length;
@@ -19,7 +21,6 @@ public class GameScene extends Scene {
     private int bgLxpos;
     private int bgLypos;
     private Camera cam;
-    private int numberOfLives;
     private staticThing bgR;
     private staticThing bgL;
     private Hero hero;
@@ -29,6 +30,7 @@ public class GameScene extends Scene {
     private static long periodFrames=300; //nbre de nanosecondes pour faire 1/60 secondes
     private int invincible=0;
     private double invicibilityTime=2000000000.0;
+    private int numberOfLives=5;
 
 
 
@@ -52,7 +54,12 @@ public class GameScene extends Scene {
                 }
                 for (int i=0;i<foes.size();i++) {
                     invincible=hero.getHitBox(foes.get(i));
-                    if (invincible==1) {hero.setIsInvicible(1); i++;}
+                    if (invincible==1) {
+                        hero.setIsInvicible(1);
+                        invincible=0;
+                        i++;
+                        numberOfLives-=1;
+                    }  // le héro a été touché !
                 }
                 if (hero.getIsInvicible()==1) {
                     invicibilityTime=invicibilityTime-(time-prevTime);
@@ -72,6 +79,8 @@ public class GameScene extends Scene {
         cam = new Camera(xcam, ycam);
         foe1 = new Foe(1200, 200,"file:foe.png",144,19,72,104 );
         foe2 = new Foe(1700, 200,"file:foe.png",144,19,72,104 );
+        heart1 = new Foe(202,230,"file:hearts.png",48,29,222,220);
+        heart2 = new Foe(452,230,"file:hearts.png",48,29,222,220);
         foes.add(foe1);
         foes.add(foe2);
         bg1Length=800;
@@ -94,6 +103,37 @@ public class GameScene extends Scene {
         bgL.getSprite().setY(bgLypos-cam.getY());
         bgR.getSprite().setX(bgRxpos-(cam.getX()%800));
         bgR.getSprite().setY(bgRypos-cam.getY());
+        if (numberOfLives<0) {numberOfLives=5;}
+        if (numberOfLives>=4) {
+            heart1.getSprite().setViewport(new Rectangle2D(48,29,222,220));
+            heart2.getSprite().setViewport(new Rectangle2D(48,29,222,220));
+        }
+        else if (numberOfLives==3) {
+            heart1.getSprite().setViewport(new Rectangle2D(48,29,222,220));
+            heart2.getSprite().setViewport(new Rectangle2D(308,42,222,220));
+        }
+        else if (numberOfLives==2) {
+            heart1.getSprite().setViewport(new Rectangle2D(48,29,222,220));
+            heart2.getSprite().setViewport(new Rectangle2D(569,40,222,220));
+        }
+        else if (numberOfLives==1) {
+            heart1.getSprite().setViewport(new Rectangle2D(308,42,222,220));
+            heart2.getSprite().setViewport(new Rectangle2D(569,40,222,220));
+        }
+        else if (numberOfLives<=0) {
+            heart1.getSprite().setViewport(new Rectangle2D(569,40,222,220));
+            heart2.getSprite().setViewport(new Rectangle2D(569,40,222,220));
+        }
+        heart1.getSprite().setFitHeight(30);
+        heart1.getSprite().setFitWidth(30);
+        heart1.getSprite().setPreserveRatio(true);
+        heart1.getSprite().setX(hero.getX()-cam.getX());
+        heart1.getSprite().setY(hero.getY()-25);
+        heart2.getSprite().setFitHeight(30);
+        heart2.getSprite().setFitWidth(30);
+        heart2.getSprite().setPreserveRatio(true);
+        heart2.getSprite().setX(hero.getX()-cam.getX()+33);
+        heart2.getSprite().setY(hero.getY()-25);
         for (int i=0;i<foes.size();i++) {
             foes.get(i).getSprite().setX(foes.get(i).getXfoe()-cam.getX()); //foe.getSprite().setX(foe.getXfoe()-cam.getX()%1300);
             foes.get(i).getSprite().setY(foes.get(i).getYfoe()-cam.getY()); }
@@ -111,6 +151,14 @@ public class GameScene extends Scene {
         this.setOnMouseClicked( (event)->{
             System.out.println("Jump");
             hero.jump(); });
+    }
+
+    public Foe getHeart1() {
+        return heart1;
+    }
+
+    public Foe getHeart2() {
+        return heart2;
     }
 
     public Hero getHero() {

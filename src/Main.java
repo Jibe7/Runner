@@ -45,6 +45,8 @@ public class Main extends Application {
         for (int j=0;j<gs.getFoes().size();j++) {
             root.getChildren().add(gs.getFoes().get(j).getSprite());
         }
+        root.getChildren().add(gs.getHeart1().getSprite());
+        root.getChildren().add(gs.getHeart2().getSprite());
         root.getChildren().add(gs.getHero().getSprite());
 
         //Image img = new Image("file:heros.png");
