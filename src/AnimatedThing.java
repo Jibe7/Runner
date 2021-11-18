@@ -10,6 +10,7 @@ abstract class AnimatedThing {
     protected int attitude;
     protected int index; //index entre 0 et maxIndex-1
     protected int maxIndex;
+    protected Rectangle2D hitbox;
 
 
 
@@ -23,10 +24,19 @@ abstract class AnimatedThing {
         sprite.setX(this.x);
         sprite.setY(this.y);
         sprite.setViewport(new Rectangle2D(x1,y1,length,width));
+        hitbox = new Rectangle2D(x1,y1,length,width);
 
     }
 
-    abstract protected void update(long l,int xcam);
+    public Rectangle2D getHitbox() {
+        return hitbox;
+    }
+
+    public void setHitbox(Rectangle2D hitbox) {
+        this.hitbox = hitbox;
+    }
+
+    abstract protected void update(long l, int xcam);
 
     public int getAttitude() {
         return attitude;

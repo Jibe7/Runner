@@ -30,8 +30,9 @@ public class GameScene extends Scene {
     private static long periodFrames=300; //nbre de nanosecondes pour faire 1/60 secondes
     private int invincible=0;
     private double invicibilityTime=2000000000.0;
-    private int numberOfLives=5;
-
+    private int numberOfLives=4;
+    private boolean invicible=false;
+    private boolean contact=false;
 
 
 
@@ -43,7 +44,36 @@ public class GameScene extends Scene {
 
                 hero.update(time,(int) cam.getX());
                 cam.update(time,hero);
-                System.out.println(invicibilityTime);
+
+                if (invicibilityTime<0) { //25000000000.0
+                    System.out.println("Il est vulnérable");
+                    invicibilityTime=2000000000.0;
+                    invicible=false;
+                    //hero.setIsInvicible(0);
+                    //invincible=0;
+                }
+
+                if (contact==false) {
+                    int i=0;
+                    while (invicible==false&&i<foes.size()) {
+                        invicible = hero.getHitBox2(foes.get(i).hitbox); //il y a contact il est invincible
+                        i++;
+                        if (invicible==true) { // s'il y a eu un contact on lui retire une vie
+                            numberOfLives -= 1;
+                            contact=true;
+                            System.out.println("CONTAAAAAACT ");
+                            System.out.println(" hero hitbox : "+hero.getHitbox().toString()+" foe1 hitbox "+foes.get(1).getHitbox().toString());
+                        }  // le héro a été touché !
+                    }
+                }
+                contact=false;
+
+                if (invicible==true) {
+                    invicibilityTime=invicibilityTime-(time-prevTime);
+                }
+
+                //contacts(time,prevTime,hero);
+                /*System.out.println(invicibilityTime);
                 System.out.println(hero.getIsInvicible());
                 if (invicibilityTime<0) { //25000000000.0
                     System.out.println("Il est vulnérable");
@@ -64,7 +94,7 @@ public class GameScene extends Scene {
                 if (hero.getIsInvicible()==1) {
                     invicibilityTime=invicibilityTime-(time-prevTime);
                 }
-                //foe.update(time,(int) cam.getX());
+                //foe.update(time,(int) cam.getX()); */
                 prevTime = time;
                 update(time);
 
@@ -77,8 +107,8 @@ public class GameScene extends Scene {
     public GameScene(Parent root, double xcam, double ycam, double x, double y,double xpos, double ypos, String filename, Integer x1, Integer y1, Integer length, Integer width,int maxI,int[] Lh) { //(x,y) taille de l'image, (xcam,ycam) position de la caméra
         super(root,x,y);
         cam = new Camera(xcam, ycam);
-        foe1 = new Foe(1200, 200,"file:foe.png",144,19,72,104 );
-        foe2 = new Foe(1700, 200,"file:foe.png",144,19,72,104 );
+        foe1 = new Foe(600, 200,"file:foe.png",144,19,72,104 );
+        foe2 = new Foe(1200, 200,"file:foe.png",144,19,72,104 );
         heart1 = new Foe(202,230,"file:hearts.png",48,29,222,220);
         heart2 = new Foe(452,230,"file:hearts.png",48,29,222,220);
         foes.add(foe1);
@@ -94,8 +124,37 @@ public class GameScene extends Scene {
         bgL=new staticThing(bgLxpos-(xcam%800),bgLypos,"file:desert1.png",0,0,bg2Length,bg2Width);
         bgR=new staticThing(bgRxpos-(xcam%800),bgRypos,"file:desert1.png",0,0,bg1Length,bg1Width);
         hero= new Hero(xpos,ypos,filename,x1,y1,length,width,maxI,Lh);
-        numberOfLives=3;
+        numberOfLives=4;
         timer.start();
+    }
+
+    public void contacts(long time, long prevTime, Hero hero) {
+
+        if (invicibilityTime<0) { //25000000000.0
+            System.out.println("Il est vulnérable");
+            invicibilityTime=2000000000.0;
+
+            //hero.setIsInvicible(0);
+            //invincible=0;
+        }
+
+        if (invicible==false) {
+            int i=0;
+            while (invicible==false&&i<foes.size()) {
+                invicible = hero.getHitBox2(foes.get(i).hitbox); //il y a contact il est invincible
+                i++;
+                if (invicible==true) { // s'il y a eu un contact on lui retire une vie
+                    numberOfLives -= 1;
+                    System.out.println("CONTAAAAAACT");
+                    System.out.println(" hero hitbox : "+hero.getHitbox().toString()+" foe1 hitbox "+foes.get(1).getHitbox().toString());
+                }  // le héro a été touché !
+            }
+        }
+
+        if (invicible) {
+            invicibilityTime=invicibilityTime-(time-prevTime);
+        }
+
     }
 
     public void update(long l) {
@@ -103,7 +162,7 @@ public class GameScene extends Scene {
         bgL.getSprite().setY(bgLypos-cam.getY());
         bgR.getSprite().setX(bgRxpos-(cam.getX()%800));
         bgR.getSprite().setY(bgRypos-cam.getY());
-        if (numberOfLives<0) {numberOfLives=5;}
+        if (numberOfLives<0) {numberOfLives=4;}
         if (numberOfLives>=4) {
             heart1.getSprite().setViewport(new Rectangle2D(48,29,222,220));
             heart2.getSprite().setViewport(new Rectangle2D(48,29,222,220));
@@ -128,20 +187,28 @@ public class GameScene extends Scene {
         heart1.getSprite().setFitWidth(30);
         heart1.getSprite().setPreserveRatio(true);
         heart1.getSprite().setX(hero.getX()-cam.getX());
-        heart1.getSprite().setY(hero.getY()-25);
+        heart1.getSprite().setY(hero.getY()-cam.getY()-40);
         heart2.getSprite().setFitHeight(30);
         heart2.getSprite().setFitWidth(30);
         heart2.getSprite().setPreserveRatio(true);
         heart2.getSprite().setX(hero.getX()-cam.getX()+33);
-        heart2.getSprite().setY(hero.getY()-25);
+        heart2.getSprite().setY(hero.getY()-cam.getY()-40);
+
+
+        for (int i=0;i<foes.size();i++) {
+            double foepos=foes.get(i).getXfoe();
+            if (foepos<(cam.getX()- foes.get(i).getLength()-50)) {
+                foepos=foepos+800+Math.random()*800;
+                //System.out.println("On ajoute la DISTAANCE");
+                //System.out.println("position du héro :  "+hero.getX()+"position du foe :  "+foepos);
+                foes.get(i).setXfoe(foepos);
+
+                }
+            foes.get(i).setHitbox(new Rectangle2D(foes.get(i).getXfoe(),foes.get(i).getYfoe(),72,104)); //length and width of foe 72 and 104
+            }
         for (int i=0;i<foes.size();i++) {
             foes.get(i).getSprite().setX(foes.get(i).getXfoe()-cam.getX()); //foe.getSprite().setX(foe.getXfoe()-cam.getX()%1300);
             foes.get(i).getSprite().setY(foes.get(i).getYfoe()-cam.getY()); }
-        for (int i=0;i<foes.size();i++) {
-            if (foes.get(i).getXfoe()<cam.getX()- foes.get(i).getLength()) {
-                foes.get(i).setXfoe(foes.get(i).getXfoe()+1000+Math.random()*(1500-200));
-                }
-            }
         hero.getSprite().setX(hero.getX()-cam.getX());
         hero.getSprite().setY(hero.getY()-cam.getY());
         //this.setbgL(0,0,this.bg2Length,this.bg2Width);
@@ -150,6 +217,7 @@ public class GameScene extends Scene {
         this.setbgR(0,0,(int)cam.getX()%800,this.bg1Width);
         this.setOnMouseClicked( (event)->{
             System.out.println("Jump");
+            System.out.println("pos hero : "+hero.getX()+" pos foe1 "+foes.get(1).getX()+" pos foes rect2D : "+foes.get(1).getHitbox().toString());
             hero.jump(); });
     }
 

@@ -91,6 +91,7 @@ public class Hero extends AnimatedThing {
 
         this.x=pos_x;
         this.y=pos_y;
+        hitbox = new Rectangle2D(this.x,this.y,55,84); //length et width de hero 55 et 84
         //sprite.setX(this.x-xcam);
         //sprite.setY(this.y);
 
@@ -152,6 +153,10 @@ public class Hero extends AnimatedThing {
         return 0; } // 0 il n'y a pas contact
     return 0;
     }
+
+   public boolean getHitBox2(Rectangle2D foe) {
+        return(hitbox.intersects(foe));
+   }
 
     public int getIsInvicible() {
         return isInvicible;
