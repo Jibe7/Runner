@@ -38,41 +38,9 @@ public class GameScene extends Scene {
     private double invicibilityTime=2000000000.0; // time the hero is invincible after being hit by an enemy
     private int gameState=0; // 0 'Click to start', 1 game is played, 2 end screen 'Click to restart' but was not finished
     private ImageView endSprite; // Screen at the end when you click after you died
+    AnimationTimer timer;
 
 
-
-    AnimationTimer timer = new AnimationTimer() {
-        public void handle(long time) {
-            if(time - prevTime > 1e9/120) {
-                //System.out.println((time-prevTime)*1e-9); // 0.016 implies 60fps
-                hero.update(time,(int) cam.getX());
-                cam.update(time,hero);
-
-                if (invicibilityTime<0) {
-                    invicibilityTime=2000000000.0;
-                    invicible=false;
-                }
-                if (contact==false) {
-                    int i=0;
-                    while (invicible==false&&i<foes.size()) {
-                        invicible = hero.getHitBox2(foes.get(i).hitbox); //he becomes invincible if there is contact
-                        i++;
-                        if (invicible==true) { // but if there was contact the hero loose one Health Point
-                            numberOfLives -= 1;
-                            contact=true;
-                        }
-                    }
-                }
-                contact=false;
-
-                if (invicible==true) {
-                    invicibilityTime=invicibilityTime-(time-prevTime);
-                }
-
-                prevTime = time;
-                update(time);
-            }
-        } };
 
 
 
@@ -115,7 +83,41 @@ public class GameScene extends Scene {
         bgR=new staticThing(bgRxpos-(xcam%800),bgRypos,"file:desert1.png",0,0,bg1Length,bg1Width);
         hero= new Hero(xpos,ypos,filename,x1,y1,length,width,maxI,Lh);
         numberOfLives=4;
-        timer.start();
+        //timer.start();
+        timer = new AnimationTimer() {
+            public void handle(long time) {
+                if(time - prevTime > 1e9/120) {
+                    //System.out.println((time-prevTime)*1e-9); // 0.016 implies 60fps
+                    hero.update(time,(int) cam.getX());
+                    cam.update(time,hero);
+
+                    if (invicibilityTime<0) {
+                        invicibilityTime=2000000000.0;
+                        invicible=false;
+                    }
+                    if (contact==false) {
+                        int i=0;
+                        while (invicible==false&&i<foes.size()) {
+                            invicible = hero.getHitBox2(foes.get(i).hitbox); //he becomes invincible if there is contact
+                            i++;
+                            if (invicible==true) { // but if there was contact the hero loose one Health Point
+                                numberOfLives -= 1;
+                                contact=true;
+                            }
+                        }
+                    }
+                    contact=false;
+
+                    if (invicible==true) {
+                        invicibilityTime=invicibilityTime-(time-prevTime);
+                    }
+
+                    prevTime = time;
+                    update(time);
+                }
+            } };
+        //timer.start();
+
     }
 
     public void contacts(long time, long prevTime, Hero hero) { //
@@ -317,5 +319,7 @@ public class GameScene extends Scene {
         return downShiftBg;
     }
 
-
+    public AnimationTimer getTimer() {
+        return timer;
+    }
 }

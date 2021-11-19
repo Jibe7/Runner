@@ -21,6 +21,7 @@ public class Main extends Application {
         int[] Lh = {22,14,53,84,96,3,65,95,174,16,76,82,274,14,55,84,350,5,61,93,428,18,72,80}; //cut of the images of heros.png
         GameScene gs = new GameScene(root, 0,0, 780,400-GameScene.getDownShiftBg()-GameScene.getUpShiftBg(),xhpos,yhpos,"file:heros.png",22,14,55,84,6,Lh);
         gs.setupCam(x,y);
+        gs.getTimer().start();
         primaryStage.setScene(gs);
         primaryStage.show();
 

@@ -12,7 +12,7 @@ public class Hero extends AnimatedThing {
     private double x_prec=150;
     private double v_x=20;
     private double vx_prec=15;
-    private final double positionY=200; //position de la route
+    private final double positionY=200; //position of the road
     private double pos_y=positionY;
     private double y_prec=positionY;
     private double v_y=0;
@@ -21,11 +21,10 @@ public class Hero extends AnimatedThing {
     private double ay_prec=0;
     private double deltaT;
     private long pTime=0;
-
     private double length=55;
     private double width=84;
 
-
+    // CONSTRUCTOR
     public Hero(double xpos, double ypos, String filename, Integer x1, Integer y1, Integer length, Integer width, int maxI,int[] Lh) {
         super(xpos,ypos,filename,x1,y1,length,width);
         list = Lh;
@@ -34,22 +33,8 @@ public class Hero extends AnimatedThing {
         compt=0;
     }
 
-    public void addList(int x1, int y1, int length, int width) { //
-        int[] tmp = new int[list.length+4];
-        for (int i=0;i<list.length;i++) {
-            tmp[i]=list[i];
-        }
-        tmp[list.length] = x1;
-        tmp[list.length+1] = y1;
-        tmp[list.length+2] = length;
-        tmp[list.length+3] = width;
-        list=tmp;
-    }
-
-    public void setList(int[] L) {
-        list=L;
-    }
-
+    // HERO UPDATE
+    // This function make the hero running, jumping, falling, reaching the ground and update his hitbox and his display on the screen
     public void update(long time,int xcam) { // this code is to make the hero run
 
         if (pTime==0) pTime=time;
@@ -74,20 +59,20 @@ public class Hero extends AnimatedThing {
         vy_prec=v_y;
 
         //GRAVITY
-        if (pos_y<positionY) { a_y=a_y+gravity; ay_prec=ay_prec+gravity; }
+        if (pos_y<positionY) { a_y=a_y+gravity; ay_prec=ay_prec+gravity; } // If the hero is in the air only the gravity is applied to him (we do not put any air friction)
 
 
         this.x=pos_x;
         this.y=pos_y;
-        hitbox = new Rectangle2D(this.x,this.y,length,width); //length et width de hero 55 et 84
+        hitbox = new Rectangle2D(this.x,this.y,length,width);
 
-        if (compt==7&&compt!=77&&compt!=99) {
+        if (compt==7&&compt!=77&&compt!=99) { // compt is set to 77 and 99 when the hero is dead in order to execute some specific features in the GameScene class
             if (a_y!=0&&v_y<0&&pos_y<positionY) { // the hero jumps
                 sprite.setViewport(new Rectangle2D(22,160,59,103));
             }
             else if (a_y!=0&&v_y>0&&pos_y<positionY) { // the hero falls
                 sprite.setViewport(new Rectangle2D(94,164,67,94)); }
-            else if(v_y==0) { // the hero is running
+            else if(v_y==0) { // the hero runs
                     index=index%(maxIndex);
                     sprite.setViewport(new Rectangle2D(list[index*4],list[1+index*4],list[2+index*4],list[3+index*4]));
                     index++; }
@@ -97,7 +82,7 @@ public class Hero extends AnimatedThing {
     }
 
     public void jump() {
-        if (pos_y>positionY-0.1) { //empêche le joueur de sauter dans les airs, il ne peut sauter que s'il touche le sol
+        if (pos_y>positionY-0.1) { // This test allows the hero to jump only if he is on the ground
         pos_y=(pos_y-1);
         y_prec=pos_y;
         ay_prec=-2000;
@@ -105,15 +90,16 @@ public class Hero extends AnimatedThing {
         vy_prec=-270;
         v_y=-270;
         }
-
     }
 
+    //GETTERS & SETTERS
+    public void setList(int[] L) {
+        list=L;
+    }
 
    public boolean getHitBox2(Rectangle2D foe) {
         return(hitbox.intersects(foe));
    }
-
-
 
     public double getPositionY() {
         return positionY;
@@ -170,4 +156,16 @@ public class Hero extends AnimatedThing {
     public void setPos_y(double pos_y) {
         this.pos_y = pos_y;
     }
+
+    /*public void addList(int x1, int y1, int length, int width) { //
+        int[] tmp = new int[list.length+4];
+        for (int i=0;i<list.length;i++) {
+            tmp[i]=list[i];
+        }
+        tmp[list.length] = x1;
+        tmp[list.length+1] = y1;
+        tmp[list.length+2] = length;
+        tmp[list.length+3] = width;
+        list=tmp;
+    } */
 }
