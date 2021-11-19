@@ -7,11 +7,22 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class GameScene extends Scene {
-    private static double upShiftBg = 50; //on affiche le background 'coupé' de façon à ce que lorsqu'on bouge la caméra on ne voit pas le blanc qu'il y a en haut de la fenêtre
-    private static double downShiftBg = 10; // même idée mais pour ne pas voir le blanc qu'il y a en bas de la fenêtre
-    private ArrayList<Foe> foes = new ArrayList<Foe>();
-    private Foe heart1;
+    //PARAMETERS FOR THE HERO
+    private Hero hero;
+    private int invincible=0;
+    private int numberOfLives=4;
+    private boolean invicible=false;
+    private boolean contact=false;
+    private Foe heart1; //for the HP of the hero
     private Foe heart2;
+    private ArrayList<Foe> foes = new ArrayList<Foe>();
+    private Foe foe1; // for the enemies of the hero
+    private Foe foe2;
+    //PARAMETERS OF THE BACKGROUND
+    private static double upShiftBg = 50;//used to shift the background so we don't see the 'white background' when the camera is going up
+    private static double downShiftBg = 10; // same but for when the camera is going down
+    private staticThing bgR; // background Right
+    private staticThing bgL; // background Left
     private int bg1Length;
     private int bg1Width;
     private int bg2Length;
@@ -20,45 +31,36 @@ public class GameScene extends Scene {
     private int bgRypos;
     private int bgLxpos;
     private int bgLypos;
+    //PARAMETERS FOR THE GAME
     private Camera cam;
-    private staticThing bgR;
-    private staticThing bgL;
-    private Hero hero;
-    private Foe foe1;
-    private Foe foe2;
     private long prevTime=0;
-    private static long periodFrames=300; //nbre de nanosecondes pour faire 1/60 secondes
-    private int invincible=0;
-    private double invicibilityTime=2000000000.0;
-    private int numberOfLives=4;
-    private boolean invicible=false;
-    private boolean contact=false;
-    private int gameState=0; // 0 'Click to start', 1 game is played, 2 end screen 'Click to restart'
-    private ImageView endSprite;
+    private static long periodFrames=300;
+    private double invicibilityTime=2000000000.0; // time the hero is invincible after being hit by an enemy
+    private int gameState=0; // 0 'Click to start', 1 game is played, 2 end screen 'Click to restart' but was not finished
+    private ImageView endSprite; // Screen at the end when you click after you died
 
 
 
     AnimationTimer timer = new AnimationTimer() {
         public void handle(long time) {
             if(time - prevTime > 1e9/120) {
-                //System.out.println((time-prevTime)*1e-9); // si on a du 0.016 ça veut dire qu'on a 60fps
-
+                //System.out.println((time-prevTime)*1e-9); // 0.016 implies 60fps
                 hero.update(time,(int) cam.getX());
                 cam.update(time,hero);
 
-                if (invicibilityTime<0) { //25000000000.0
+                if (invicibilityTime<0) {
                     invicibilityTime=2000000000.0;
                     invicible=false;
                 }
                 if (contact==false) {
                     int i=0;
                     while (invicible==false&&i<foes.size()) {
-                        invicible = hero.getHitBox2(foes.get(i).hitbox); //il y a contact il est invincible
+                        invicible = hero.getHitBox2(foes.get(i).hitbox); //he becomes invincible if there is contact
                         i++;
-                        if (invicible==true) { // s'il y a eu un contact on lui retire une vie
+                        if (invicible==true) { // but if there was contact the hero loose one Health Point
                             numberOfLives -= 1;
                             contact=true;
-                        }  // le héro a été touché !
+                        }
                     }
                 }
                 contact=false;
@@ -73,7 +75,14 @@ public class GameScene extends Scene {
         } };
 
 
-    public GameScene(Parent root, double xcam, double ycam, double x, double y,double xpos, double ypos, String filename, Integer x1, Integer y1, Integer length, Integer width,int maxI,int[] Lh) { //(x,y) taille de l'image, (xcam,ycam) position de la caméra
+
+    //CONSTRUCTOR
+    // xcam,ycam for the position of the camera
+    // x,y size of the scene
+    // xpos, ypos position of the hero
+    // maxI number of sprites for the hero
+    // Lh positions of the hero on the sprite
+    public GameScene(Parent root, double xcam, double ycam, double x, double y,double xpos, double ypos, String filename, Integer x1, Integer y1, Integer length, Integer width,int maxI,int[] Lh) {
         super(root,x,y);
         cam = new Camera(xcam, ycam);
         foe1 = new Foe(600, 230,"file:foe.png",144,19,72,104 );
@@ -109,13 +118,9 @@ public class GameScene extends Scene {
         timer.start();
     }
 
-    public void contacts(long time, long prevTime, Hero hero) {
-
+    public void contacts(long time, long prevTime, Hero hero) { //
         if (invicibilityTime<0) { //25000000000.0
             invicibilityTime=2000000000.0;
-
-            //hero.setIsInvicible(0);
-            //invincible=0;
         }
 
         if (invicible==false) {
@@ -195,14 +200,14 @@ public class GameScene extends Scene {
         this.setbgR(0,0,(int)cam.getX()%800,this.bg1Width);
         this.setOnMouseClicked( (event)->{
             hero.jump();
-            if (hero.getCompt()==77) {
+            if (hero.getCompt()==77) { // when the hero has no heart we have set this constant to 77, and if the user click again it will bring the 'gameover' image
                 endSprite.setX(0);
                 endSprite.setY(0);
                 hero.setCompt(99);
             }
         });
 
-        if (gameState==2) {
+        if (gameState==2) { // if the hero is dead we stop his race
             hero.setA_x(0);
             hero.setA_y(0);
             hero.setGravity(0);
@@ -212,14 +217,12 @@ public class GameScene extends Scene {
             hero.setV_y(0);
             hero.setVx_prec(0);
             hero.setVy_prec(0);
-            hero.setCompt(77); //le héro ne court pas sur place grâce à cette ligne
-
-
-            //endSprite.setX(0);
-            //endSprite.setY(0);
+            hero.setCompt(77); // with this we stop the hero from running when he has no speed
             }
-
     }
+
+
+    //GETTERS AND SETTERS
 
     public Foe getHeart1() {
         return heart1;
@@ -304,12 +307,6 @@ public class GameScene extends Scene {
 
     public void setbgL(int x1,int y1,int length, int width) {
         bgL.modSprite(x1,y1,length,width);
-    }
-
-    public void update() {
-        bgR.getSprite().setViewport(new Rectangle2D(this.cam.getX(),this.cam.getY(),bg1Length-this.cam.getX()%bg1Length,bg1Width));
-        bgL.getSprite().setViewport(new Rectangle2D((double) bg1Length,this.cam.getY(),bg1Length+((int) this.cam.getX()%bg2Length),bg2Width));
-
     }
 
     public static double getUpShiftBg() {

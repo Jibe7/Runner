@@ -21,9 +21,9 @@ public class Hero extends AnimatedThing {
     private double ay_prec=0;
     private double deltaT;
     private long pTime=0;
-    private int isInvicible=0;
+
     private double length=55;
-    //private double width=
+    private double width=84;
 
 
     public Hero(double xpos, double ypos, String filename, Integer x1, Integer y1, Integer length, Integer width, int maxI,int[] Lh) {
@@ -34,7 +34,7 @@ public class Hero extends AnimatedThing {
         compt=0;
     }
 
-    public void addList(int x1, int y1, int length, int width) {
+    public void addList(int x1, int y1, int length, int width) { //
         int[] tmp = new int[list.length+4];
         for (int i=0;i<list.length;i++) {
             tmp[i]=list[i];
@@ -50,18 +50,17 @@ public class Hero extends AnimatedThing {
         list=L;
     }
 
-    public void update(long time,int xcam) {
-        //faire évoluer x et y puis :
+    public void update(long time,int xcam) { // this code is to make the hero run
 
         if (pTime==0) pTime=time;
 
-        if (vy_prec!=0&&y_prec>=(positionY-0.001)) {vy_prec=0; a_y=0; ay_prec=0; v_y=0; y_prec=positionY;} //250
+        if (vy_prec!=0&&y_prec>=(positionY-0.001)) {vy_prec=0; a_y=0; ay_prec=0; v_y=0; y_prec=positionY;} // if the hero falls on the floor we stop him
         deltaT = 1e-9*(time-pTime);
         a_x=ax_prec;
         a_y=ay_prec;
 
-        if (v_x>600) {v_x=vx_prec; a_x=0; ax_prec=0;}
-        else {v_x=vx_prec+deltaT*a_x;}
+        if (v_x>600) {v_x=vx_prec; a_x=0; ax_prec=0;} // we stop the acceleration of the hero to keep him at the same speed
+        else {v_x=vx_prec+deltaT*a_x;} // we accelerate the hero
 
         v_x=vx_prec+deltaT*a_x;
         v_y=vy_prec+deltaT*a_y;
@@ -80,15 +79,15 @@ public class Hero extends AnimatedThing {
 
         this.x=pos_x;
         this.y=pos_y;
-        hitbox = new Rectangle2D(this.x,this.y,55,84); //length et width de hero 55 et 84
+        hitbox = new Rectangle2D(this.x,this.y,length,width); //length et width de hero 55 et 84
 
         if (compt==7&&compt!=77&&compt!=99) {
-            if (a_y!=0&&v_y<0&&pos_y<positionY) {
+            if (a_y!=0&&v_y<0&&pos_y<positionY) { // the hero jumps
                 sprite.setViewport(new Rectangle2D(22,160,59,103));
             }
-            else if (a_y!=0&&v_y>0&&pos_y<positionY) {
+            else if (a_y!=0&&v_y>0&&pos_y<positionY) { // the hero falls
                 sprite.setViewport(new Rectangle2D(94,164,67,94)); }
-            else if(v_y==0) {
+            else if(v_y==0) { // the hero is running
                     index=index%(maxIndex);
                     sprite.setViewport(new Rectangle2D(list[index*4],list[1+index*4],list[2+index*4],list[3+index*4]));
                     index++; }
@@ -109,38 +108,12 @@ public class Hero extends AnimatedThing {
 
     }
 
-   public int getHitBox(Foe foe) {
-        if (isInvicible==0) { //si le héro est vulnérable i.e. n'est pas invincible
-            if ((pos_x >= foe.getXfoe()+35) && (pos_x <= foe.getXfoe() + foe.getLength()-35)) {
-                if ((pos_y >=250-(foe.getYfoe()+15 + foe.getWidth()))&&pos_y<=250) {
-                    System.out.println("CONTACT !");
-                    return 1; //There's contact !
-                }
-            }
-            if ((pos_x + length >= foe.getXfoe()+35) && (pos_x + length <= foe.getXfoe() + foe.getLength()-35)) {
-                if ((pos_y >=250-(foe.getYfoe() +15+ foe.getWidth()))&&pos_y<=250) {
-                    System.out.println("CONTACT !");
-                    return 1; //There's contact !
-
-                }
-            }
-        }
-        else {
-        return 0; } // 0 il n'y a pas contact
-    return 0;
-    }
 
    public boolean getHitBox2(Rectangle2D foe) {
         return(hitbox.intersects(foe));
    }
 
-    public int getIsInvicible() {
-        return isInvicible;
-    }
 
-    public void setIsInvicible(int isInvicible) {
-        this.isInvicible = isInvicible;
-    }
 
     public double getPositionY() {
         return positionY;

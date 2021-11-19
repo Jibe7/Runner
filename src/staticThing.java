@@ -21,6 +21,7 @@ public class staticThing {
         sprite.setViewport(new Rectangle2D(x1,y1,length,width));
 
     }
+
     public void modSprite(int x1,int y1,int length, int width) {
         sprite.setViewport(new Rectangle2D(x1,y1,length,width));
     }

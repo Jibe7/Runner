@@ -3,7 +3,6 @@ import javafx.geometry.Rectangle2D;
 public class Foe extends AnimatedThing {
     private double xfoe;
     private double yfoe;
-    private double distancefoe=1000;
     private double deltaT;
     private long pTime=0;
     private double length=72;
@@ -17,7 +16,12 @@ public class Foe extends AnimatedThing {
         yfoe=ypos;
     }
 
-    //METHOD
+
+    public void update(long time,int xcam) {
+
+    }
+
+    //SETTERS & GETTERS
     public void setXfoe(double xfoe) {
         this.xfoe = xfoe;
     }
@@ -34,31 +38,9 @@ public class Foe extends AnimatedThing {
         return yfoe;
     }
 
-    public void update(long time,int xcam) { //on va afficher l'enemie tous les distancefoe
-
-        //if (xcam>xfoe-1000) {
-            //xfoe+=0;
-        //}
-        }
-        //sprite.setViewport(new Rectangle2D(144,19,72,104));
-
-        //if (compt==7) {
-            //x+=15;
-            //xaffichage=x-xcam; //x position du héro par rapport à un référentiel fixe, xaffichage position par rapport à la caméra
-            //sprite.setX(xaffichage);
-            //sprite.setY(this.y);
-
-
-
-            //compt=compt%7;
-       // }
-       // compt++;
-
-
     public double getLength() {
         return length;
     }
-
     public double getWidth() {
         return width;
     }

@@ -8,12 +8,9 @@ abstract class AnimatedThing {
     protected double y;
     protected ImageView sprite;
     protected int attitude;
-    protected int index; //index entre 0 et maxIndex-1
+    protected int index; //index is between 0 and maxIndex-1
     protected int maxIndex;
     protected Rectangle2D hitbox;
-
-
-
 
     public AnimatedThing(double xpos, double ypos, String filename, Integer x1, Integer y1, Integer length, Integer width) {
         this.x=xpos;
@@ -25,8 +22,9 @@ abstract class AnimatedThing {
         sprite.setY(this.y);
         sprite.setViewport(new Rectangle2D(x1,y1,length,width));
         hitbox = new Rectangle2D(x1,y1,length,width);
-
     }
+
+    // GETTERS & SETTERS
 
     public Rectangle2D getHitbox() {
         return hitbox;
@@ -63,12 +61,4 @@ abstract class AnimatedThing {
         return index;
     }
 
-
-
-    protected void setOnMouseClicked2(Scene scene, Hero hero) {
-            scene.setOnMouseClicked ( (event)->{
-            System.out.println("Jump");
-            hero.jump();
-        });
-    }
 }
