@@ -33,6 +33,8 @@ public class GameScene extends Scene {
     private int numberOfLives=4;
     private boolean invicible=false;
     private boolean contact=false;
+    private int gameState=0; // 0 'Click to start', 1 game is played, 2 end screen 'Click to restart'
+    private ImageView endSprite;
 
 
 
@@ -41,18 +43,13 @@ public class GameScene extends Scene {
             if(time - prevTime > 1e9/120) {
                 //System.out.println((time-prevTime)*1e-9); // si on a du 0.016 ça veut dire qu'on a 60fps
 
-
                 hero.update(time,(int) cam.getX());
                 cam.update(time,hero);
 
                 if (invicibilityTime<0) { //25000000000.0
-                    System.out.println("Il est vulnérable");
                     invicibilityTime=2000000000.0;
                     invicible=false;
-                    //hero.setIsInvicible(0);
-                    //invincible=0;
                 }
-
                 if (contact==false) {
                     int i=0;
                     while (invicible==false&&i<foes.size()) {
@@ -61,8 +58,6 @@ public class GameScene extends Scene {
                         if (invicible==true) { // s'il y a eu un contact on lui retire une vie
                             numberOfLives -= 1;
                             contact=true;
-                            System.out.println("CONTAAAAAACT ");
-                            System.out.println(" hero hitbox : "+hero.getHitbox().toString()+" foe1 hitbox "+foes.get(1).getHitbox().toString());
                         }  // le héro a été touché !
                     }
                 }
@@ -72,45 +67,31 @@ public class GameScene extends Scene {
                     invicibilityTime=invicibilityTime-(time-prevTime);
                 }
 
-                //contacts(time,prevTime,hero);
-                /*System.out.println(invicibilityTime);
-                System.out.println(hero.getIsInvicible());
-                if (invicibilityTime<0) { //25000000000.0
-                    System.out.println("Il est vulnérable");
-                    invicibilityTime=2000000000.0;
-
-                    hero.setIsInvicible(0);
-                    invincible=0;
-                }
-                for (int i=0;i<foes.size();i++) {
-                    invincible=hero.getHitBox(foes.get(i));
-                    if (invincible==1) {
-                        hero.setIsInvicible(1);
-                        invincible=0;
-                        i++;
-                        numberOfLives-=1;
-                    }  // le héro a été touché !
-                }
-                if (hero.getIsInvicible()==1) {
-                    invicibilityTime=invicibilityTime-(time-prevTime);
-                }
-                //foe.update(time,(int) cam.getX()); */
                 prevTime = time;
                 update(time);
-
-
-
             }
-
         } };
+
 
     public GameScene(Parent root, double xcam, double ycam, double x, double y,double xpos, double ypos, String filename, Integer x1, Integer y1, Integer length, Integer width,int maxI,int[] Lh) { //(x,y) taille de l'image, (xcam,ycam) position de la caméra
         super(root,x,y);
         cam = new Camera(xcam, ycam);
-        foe1 = new Foe(600, 200,"file:foe.png",144,19,72,104 );
-        foe2 = new Foe(1200, 200,"file:foe.png",144,19,72,104 );
+        foe1 = new Foe(600, 230,"file:foe.png",144,19,72,104 );
+        foe2 = new Foe(1300, 230,"file:foe.png",144,19,72,104 );
+        foe1.getSprite().setFitHeight(62);
+        foe1.getSprite().setFitWidth(94);
+        foe1.getSprite().setPreserveRatio(true);
+        foe2.getSprite().setFitHeight(62);
+        foe2.getSprite().setFitWidth(94);
+        foe2.getSprite().setPreserveRatio(true);
         heart1 = new Foe(202,230,"file:hearts.png",48,29,222,220);
         heart2 = new Foe(452,230,"file:hearts.png",48,29,222,220);
+        endSprite = new ImageView(new Image("file:gameover.jpg"));
+        endSprite.setViewport(new Rectangle2D(79,64,1197,673));
+        endSprite.setX(-1000);
+        endSprite.setY(-1000);
+        endSprite.setFitHeight(350);
+        endSprite.setFitWidth(780);
         foes.add(foe1);
         foes.add(foe2);
         bg1Length=800;
@@ -131,7 +112,6 @@ public class GameScene extends Scene {
     public void contacts(long time, long prevTime, Hero hero) {
 
         if (invicibilityTime<0) { //25000000000.0
-            System.out.println("Il est vulnérable");
             invicibilityTime=2000000000.0;
 
             //hero.setIsInvicible(0);
@@ -145,8 +125,6 @@ public class GameScene extends Scene {
                 i++;
                 if (invicible==true) { // s'il y a eu un contact on lui retire une vie
                     numberOfLives -= 1;
-                    System.out.println("CONTAAAAAACT");
-                    System.out.println(" hero hitbox : "+hero.getHitbox().toString()+" foe1 hitbox "+foes.get(1).getHitbox().toString());
                 }  // le héro a été touché !
             }
         }
@@ -162,7 +140,7 @@ public class GameScene extends Scene {
         bgL.getSprite().setY(bgLypos-cam.getY());
         bgR.getSprite().setX(bgRxpos-(cam.getX()%800));
         bgR.getSprite().setY(bgRypos-cam.getY());
-        if (numberOfLives<0) {numberOfLives=4;}
+        //if (numberOfLives<0) {numberOfLives=4;}
         if (numberOfLives>=4) {
             heart1.getSprite().setViewport(new Rectangle2D(48,29,222,220));
             heart2.getSprite().setViewport(new Rectangle2D(48,29,222,220));
@@ -182,6 +160,10 @@ public class GameScene extends Scene {
         else if (numberOfLives<=0) {
             heart1.getSprite().setViewport(new Rectangle2D(569,40,222,220));
             heart2.getSprite().setViewport(new Rectangle2D(569,40,222,220));
+            gameState=2;
+
+
+
         }
         heart1.getSprite().setFitHeight(30);
         heart1.getSprite().setFitWidth(30);
@@ -197,32 +179,54 @@ public class GameScene extends Scene {
 
         for (int i=0;i<foes.size();i++) {
             double foepos=foes.get(i).getXfoe();
-            if (foepos<(cam.getX()- foes.get(i).getLength()-50)) {
-                foepos=foepos+800+Math.random()*800;
-                //System.out.println("On ajoute la DISTAANCE");
-                //System.out.println("position du héro :  "+hero.getX()+"position du foe :  "+foepos);
+            if (foepos<(cam.getX()- foes.get(i).getLength()-200)) {
+                foepos=foepos+1400+Math.random()*250;
                 foes.get(i).setXfoe(foepos);
 
                 }
-            foes.get(i).setHitbox(new Rectangle2D(foes.get(i).getXfoe(),foes.get(i).getYfoe(),72,104)); //length and width of foe 72 and 104
+            foes.get(i).setHitbox(new Rectangle2D(foes.get(i).getXfoe(),foes.get(i).getYfoe(),72-40,104-74)); //length and width of foe 72 and 104
             }
         for (int i=0;i<foes.size();i++) {
             foes.get(i).getSprite().setX(foes.get(i).getXfoe()-cam.getX()); //foe.getSprite().setX(foe.getXfoe()-cam.getX()%1300);
             foes.get(i).getSprite().setY(foes.get(i).getYfoe()-cam.getY()); }
         hero.getSprite().setX(hero.getX()-cam.getX());
         hero.getSprite().setY(hero.getY()-cam.getY());
-        //this.setbgL(0,0,this.bg2Length,this.bg2Width);
-        //this.setbgR(0,0,this.bg1Length,this.bg1Width);
         this.setbgL(0,0,bg2Length,this.bg2Width);
         this.setbgR(0,0,(int)cam.getX()%800,this.bg1Width);
         this.setOnMouseClicked( (event)->{
-            System.out.println("Jump");
-            System.out.println("pos hero : "+hero.getX()+" pos foe1 "+foes.get(1).getX()+" pos foes rect2D : "+foes.get(1).getHitbox().toString());
-            hero.jump(); });
+            hero.jump();
+            if (hero.getCompt()==77) {
+                endSprite.setX(0);
+                endSprite.setY(0);
+                hero.setCompt(99);
+            }
+        });
+
+        if (gameState==2) {
+            hero.setA_x(0);
+            hero.setA_y(0);
+            hero.setGravity(0);
+            hero.setAx_prec(0);
+            hero.setAy_prec(0);
+            hero.setV_x(0);
+            hero.setV_y(0);
+            hero.setVx_prec(0);
+            hero.setVy_prec(0);
+            hero.setCompt(77); //le héro ne court pas sur place grâce à cette ligne
+
+
+            //endSprite.setX(0);
+            //endSprite.setY(0);
+            }
+
     }
 
     public Foe getHeart1() {
         return heart1;
+    }
+
+    public int getGameState() {
+        return gameState;
     }
 
     public Foe getHeart2() {
@@ -284,6 +288,10 @@ public class GameScene extends Scene {
 
     public staticThing getbgR() {
         return bgR;
+    }
+
+    public ImageView getEndSprite() {
+        return endSprite;
     }
 
     public staticThing getbgL() {

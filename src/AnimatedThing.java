@@ -64,6 +64,7 @@ abstract class AnimatedThing {
     }
 
 
+
     protected void setOnMouseClicked2(Scene scene, Hero hero) {
             scene.setOnMouseClicked ( (event)->{
             System.out.println("Jump");

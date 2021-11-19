@@ -2,10 +2,11 @@ import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+
+import java.awt.*;
 
 public class Main extends Application {
 
@@ -48,6 +49,9 @@ public class Main extends Application {
         root.getChildren().add(gs.getHeart1().getSprite());
         root.getChildren().add(gs.getHeart2().getSprite());
         root.getChildren().add(gs.getHero().getSprite());
+
+        root.getChildren().add(gs.getEndSprite());
+
 
         //Image img = new Image("file:heros.png");
        // ImageView  iv = new ImageView(img);

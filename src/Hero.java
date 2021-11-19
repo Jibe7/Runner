@@ -62,7 +62,6 @@ public class Hero extends AnimatedThing {
 
         if (v_x>600) {v_x=vx_prec; a_x=0; ax_prec=0;}
         else {v_x=vx_prec+deltaT*a_x;}
-        //if (v_x>650) {ax_prec=0;} // arrête d'accélerer à une certaine vitesse
 
         v_x=vx_prec+deltaT*a_x;
         v_y=vy_prec+deltaT*a_y;
@@ -75,16 +74,6 @@ public class Hero extends AnimatedThing {
         y_prec=pos_y;
         vy_prec=v_y;
 
-
-
-
-
-        // JUMP PART
-        //if (x>2980 & x<3000) {pos_y=(positionY-1); y_prec=(positionY-1); System.out.println("OK");}
-        //if (x>3000 & x<3010) {ay_prec=-20; a_y=-20; vy_prec=-150; v_y=-150; System.out.println("QUOI \n");}
-       //setOnMouseClicked2(root,this);
-
-
         //GRAVITY
         if (pos_y<positionY) { a_y=a_y+gravity; ay_prec=ay_prec+gravity; }
 
@@ -92,15 +81,8 @@ public class Hero extends AnimatedThing {
         this.x=pos_x;
         this.y=pos_y;
         hitbox = new Rectangle2D(this.x,this.y,55,84); //length et width de hero 55 et 84
-        //sprite.setX(this.x-xcam);
-        //sprite.setY(this.y);
 
-        if (compt==7) {
-            //x+=15;
-            //xaffichage=x-xcam; //x position du héro par rapport à un référentiel fixe, xaffichage position par rapport à la caméra
-            //sprite.setX(xaffichage);
-            //sprite.setY(this.y);
-
+        if (compt==7&&compt!=77&&compt!=99) {
             if (a_y!=0&&v_y<0&&pos_y<positionY) {
                 sprite.setViewport(new Rectangle2D(22,160,59,103));
             }
@@ -110,15 +92,9 @@ public class Hero extends AnimatedThing {
                     index=index%(maxIndex);
                     sprite.setViewport(new Rectangle2D(list[index*4],list[1+index*4],list[2+index*4],list[3+index*4]));
                     index++; }
-
             }
             compt=compt%7;
-
         compt++;
-        //System.out.println("CECI EST X : "+x);
-        //System.out.println("CECI EST Y : "+y);
-
-
     }
 
     public void jump() {
@@ -127,8 +103,8 @@ public class Hero extends AnimatedThing {
         y_prec=pos_y;
         ay_prec=-2000;
         a_y=-2000;
-        vy_prec=-250;
-        v_y=-250;
+        vy_prec=-270;
+        v_y=-270;
         }
 
     }
@@ -168,5 +144,57 @@ public class Hero extends AnimatedThing {
 
     public double getPositionY() {
         return positionY;
+    }
+
+    public void setGravity(double gravity) {
+        this.gravity = gravity;
+    }
+
+    public void setA_x(double a_x) {
+        this.a_x = a_x;
+    }
+
+    public void setAx_prec(double ax_prec) {
+        this.ax_prec = ax_prec;
+    }
+
+    public void setV_x(double v_x) {
+        this.v_x = v_x;
+    }
+
+    public void setVx_prec(double vx_prec) {
+        this.vx_prec = vx_prec;
+    }
+
+    public void setV_y(double v_y) {
+        this.v_y = v_y;
+    }
+
+    public void setVy_prec(double vy_prec) {
+        this.vy_prec = vy_prec;
+    }
+
+    public void setA_y(double a_y) {
+        this.a_y = a_y;
+    }
+
+    public void setAy_prec(double ay_prec) {
+        this.ay_prec = ay_prec;
+    }
+
+    public void setCompt(int compt) {
+        this.compt = compt;
+    }
+
+    public int getCompt() {
+        return compt;
+    }
+
+    public void setPos_x(double pos_x) {
+        this.pos_x = pos_x;
+    }
+
+    public void setPos_y(double pos_y) {
+        this.pos_y = pos_y;
     }
 }
