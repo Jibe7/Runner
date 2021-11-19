@@ -83,7 +83,6 @@ public class GameScene extends Scene {
         bgR=new staticThing(bgRxpos-(xcam%800),bgRypos,"file:desert1.png",0,0,bg1Length,bg1Width);
         hero= new Hero(xpos,ypos,filename,x1,y1,length,width,maxI,Lh);
         numberOfLives=4;
-        //timer.start();
         timer = new AnimationTimer() {
             public void handle(long time) {
                 if(time - prevTime > 1e9/120) {
@@ -116,23 +115,22 @@ public class GameScene extends Scene {
                     update(time);
                 }
             } };
-        //timer.start();
 
     }
 
     public void contacts(long time, long prevTime, Hero hero) { //
-        if (invicibilityTime<0) { //25000000000.0
+        if (invicibilityTime<0) {
             invicibilityTime=2000000000.0;
         }
 
-        if (invicible==false) {
+        if (invicible==false) { //if the hero is vulnerable
             int i=0;
             while (invicible==false&&i<foes.size()) {
-                invicible = hero.getHitBox2(foes.get(i).hitbox); //il y a contact il est invincible
+                invicible = hero.getHitBox2(foes.get(i).hitbox); //invicible=true if there is contact between the hero and one of the foe
                 i++;
-                if (invicible==true) { // s'il y a eu un contact on lui retire une vie
+                if (invicible==true) { // if there is contact the hero lost one HealthPoint
                     numberOfLives -= 1;
-                }  // le héro a été touché !
+                }
             }
         }
 
@@ -142,12 +140,14 @@ public class GameScene extends Scene {
 
     }
 
+    //UPDATE DE GAMESCENE
+    // Updates the background images as well as many things that should not be there.
+    // My next Commit should correct that
     public void update(long l) {
         bgL.getSprite().setX(bgLxpos-(cam.getX()%800));
         bgL.getSprite().setY(bgLypos-cam.getY());
         bgR.getSprite().setX(bgRxpos-(cam.getX()%800));
         bgR.getSprite().setY(bgRypos-cam.getY());
-        //if (numberOfLives<0) {numberOfLives=4;}
         if (numberOfLives>=4) {
             heart1.getSprite().setViewport(new Rectangle2D(48,29,222,220));
             heart2.getSprite().setViewport(new Rectangle2D(48,29,222,220));
@@ -194,8 +194,10 @@ public class GameScene extends Scene {
             foes.get(i).setHitbox(new Rectangle2D(foes.get(i).getXfoe(),foes.get(i).getYfoe(),72-40,104-74)); //length and width of foe 72 and 104
             }
         for (int i=0;i<foes.size();i++) {
-            foes.get(i).getSprite().setX(foes.get(i).getXfoe()-cam.getX()); //foe.getSprite().setX(foe.getXfoe()-cam.getX()%1300);
-            foes.get(i).getSprite().setY(foes.get(i).getYfoe()-cam.getY()); }
+            foes.get(i).getSprite().setX(foes.get(i).getXfoe()-cam.getX());
+            foes.get(i).getSprite().setY(foes.get(i).getYfoe()-cam.getY());
+        }
+
         hero.getSprite().setX(hero.getX()-cam.getX());
         hero.getSprite().setY(hero.getY()-cam.getY());
         this.setbgL(0,0,bg2Length,this.bg2Width);
