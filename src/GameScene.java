@@ -9,8 +9,6 @@ import javafx.scene.image.ImageView;
 public class GameScene extends Scene {
     //PARAMETERS FOR THE HERO
     private Hero hero;
-    private int invincible=0;
-    private int numberOfLives=4;
     private boolean invicible=false;
     private boolean contact=false;
     private Foe heart1; //for the HP of the hero
@@ -82,7 +80,7 @@ public class GameScene extends Scene {
         bgL=new staticThing(bgLxpos-(xcam%800),bgLypos,"file:desert1.png",0,0,bg2Length,bg2Width);
         bgR=new staticThing(bgRxpos-(xcam%800),bgRypos,"file:desert1.png",0,0,bg1Length,bg1Width);
         hero= new Hero(xpos,ypos,filename,x1,y1,length,width,maxI,Lh);
-        numberOfLives=4;
+        //numberOfLives=4;
         timer = new AnimationTimer() {
             public void handle(long time) {
                 if(time - prevTime > 1e9/120) {
@@ -100,7 +98,8 @@ public class GameScene extends Scene {
                             invicible = hero.getHitBox2(foes.get(i).hitbox); //he becomes invincible if there is contact
                             i++;
                             if (invicible==true) { // but if there was contact the hero loose one Health Point
-                                numberOfLives -= 1;
+                                //numberOfLives -= 1;
+                                hero.setNumberOfLives(hero.getNumberOfLives()-1);
                                 contact=true;
                             }
                         }
@@ -129,7 +128,8 @@ public class GameScene extends Scene {
                 invicible = hero.getHitBox2(foes.get(i).hitbox); //invicible=true if there is contact between the hero and one of the foe
                 i++;
                 if (invicible==true) { // if there is contact the hero lost one HealthPoint
-                    numberOfLives -= 1;
+                    //numberOfLives -= 1;
+                    hero.setNumberOfLives(hero.getNumberOfLives()-1);
                 }
             }
         }
@@ -140,37 +140,35 @@ public class GameScene extends Scene {
 
     }
 
-    //UPDATE DE GAMESCENE
-    // Updates the background images as well as many things that should not be there.
-    // My next Commit should correct that
+    //UPDATE OF GAMESCENE
     public void update(long l) {
+        //BACKGROUND SETTINGS
         bgL.getSprite().setX(bgLxpos-(cam.getX()%800));
         bgL.getSprite().setY(bgLypos-cam.getY());
         bgR.getSprite().setX(bgRxpos-(cam.getX()%800));
         bgR.getSprite().setY(bgRypos-cam.getY());
-        if (numberOfLives>=4) {
+
+        // HEALTH POINT DISPLAY
+        if (hero.getNumberOfLives()>=4) {
             heart1.getSprite().setViewport(new Rectangle2D(48,29,222,220));
             heart2.getSprite().setViewport(new Rectangle2D(48,29,222,220));
         }
-        else if (numberOfLives==3) {
+        else if (hero.getNumberOfLives()==3) {
             heart1.getSprite().setViewport(new Rectangle2D(48,29,222,220));
             heart2.getSprite().setViewport(new Rectangle2D(308,42,222,220));
         }
-        else if (numberOfLives==2) {
+        else if (hero.getNumberOfLives()==2) {
             heart1.getSprite().setViewport(new Rectangle2D(48,29,222,220));
             heart2.getSprite().setViewport(new Rectangle2D(569,40,222,220));
         }
-        else if (numberOfLives==1) {
+        else if (hero.getNumberOfLives()==1) {
             heart1.getSprite().setViewport(new Rectangle2D(308,42,222,220));
             heart2.getSprite().setViewport(new Rectangle2D(569,40,222,220));
         }
-        else if (numberOfLives<=0) {
+        else if (hero.getNumberOfLives()<=0) {
             heart1.getSprite().setViewport(new Rectangle2D(569,40,222,220));
             heart2.getSprite().setViewport(new Rectangle2D(569,40,222,220));
             gameState=2;
-
-
-
         }
         heart1.getSprite().setFitHeight(30);
         heart1.getSprite().setFitWidth(30);
@@ -183,11 +181,11 @@ public class GameScene extends Scene {
         heart2.getSprite().setX(hero.getX()-cam.getX()+33);
         heart2.getSprite().setY(hero.getY()-cam.getY()-40);
 
-
+        // FOES APPEARANCE
         for (int i=0;i<foes.size();i++) {
             double foepos=foes.get(i).getXfoe();
-            if (foepos<(cam.getX()- foes.get(i).getLength()-200)) {
-                foepos=foepos+1400+Math.random()*250;
+            if (foepos<(cam.getX()- foes.get(i).getLength()-200)) { // if the foe get out of the screen (on left) we reuse him and place him at the right of the screen
+                foepos=foepos+1300+Math.random()*250;
                 foes.get(i).setXfoe(foepos);
 
                 }
@@ -198,10 +196,11 @@ public class GameScene extends Scene {
             foes.get(i).getSprite().setY(foes.get(i).getYfoe()-cam.getY());
         }
 
+        //HERO SETUP ON SCREEN
         hero.getSprite().setX(hero.getX()-cam.getX());
         hero.getSprite().setY(hero.getY()-cam.getY());
-        this.setbgL(0,0,bg2Length,this.bg2Width);
-        this.setbgR(0,0,(int)cam.getX()%800,this.bg1Width);
+
+        //JUMP EVENT
         this.setOnMouseClicked( (event)->{
             hero.jump();
             if (hero.getCompt()==77) { // when the hero has no heart we have set this constant to 77, and if the user click again it will bring the 'gameover' image
@@ -211,7 +210,8 @@ public class GameScene extends Scene {
             }
         });
 
-        if (gameState==2) { // if the hero is dead we stop his race
+        //END OF THE RACE IF THE HERO HAS NO HEALTH POINT REMAINING
+        if (gameState==2) {
             hero.setA_x(0);
             hero.setA_y(0);
             hero.setGravity(0);
@@ -224,7 +224,6 @@ public class GameScene extends Scene {
             hero.setCompt(77); // with this we stop the hero from running when he has no speed
             }
     }
-
 
     //GETTERS AND SETTERS
 

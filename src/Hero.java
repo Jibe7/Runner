@@ -23,6 +23,7 @@ public class Hero extends AnimatedThing {
     private long pTime=0;
     private double length=55;
     private double width=84;
+    private int numberOfLives=4;
 
     // CONSTRUCTOR
     public Hero(double xpos, double ypos, String filename, Integer x1, Integer y1, Integer length, Integer width, int maxI,int[] Lh) {
@@ -60,12 +61,12 @@ public class Hero extends AnimatedThing {
 
         //GRAVITY
         if (pos_y<positionY) { a_y=a_y+gravity; ay_prec=ay_prec+gravity; } // If the hero is in the air only the gravity is applied to him (we do not put any air friction)
-
-
+        // AFTER CALCULATION WE UPDATE X,Y POSITION AND THE HITBOX
         this.x=pos_x;
         this.y=pos_y;
         hitbox = new Rectangle2D(this.x,this.y,length,width);
 
+        // THIS COUNTER CALLED 'compt' IS USED TO MAKE THE HERO ANIMATION SLOWER THAT WHAT IT WOULD BE WITHOUT IT
         if (compt==7&&compt!=77&&compt!=99) { // compt is set to 77 and 99 when the hero is dead in order to execute some specific features in the GameScene class
             if (a_y!=0&&v_y<0&&pos_y<positionY) { // the hero jumps
                 sprite.setViewport(new Rectangle2D(22,160,59,103));
@@ -81,6 +82,7 @@ public class Hero extends AnimatedThing {
         compt++;
     }
 
+    // JUMP FUNCTION : IF THE HERO IS ON THE GROUND, WE GIVE HIM NEGATIVE ACCELERATION AND SPEED SO HE GOES UP ON THE SCREEN
     public void jump() {
         if (pos_y>positionY-0.1) { // This test allows the hero to jump only if he is on the ground
         pos_y=(pos_y-1);
@@ -157,15 +159,12 @@ public class Hero extends AnimatedThing {
         this.pos_y = pos_y;
     }
 
-    /*public void addList(int x1, int y1, int length, int width) { //
-        int[] tmp = new int[list.length+4];
-        for (int i=0;i<list.length;i++) {
-            tmp[i]=list[i];
-        }
-        tmp[list.length] = x1;
-        tmp[list.length+1] = y1;
-        tmp[list.length+2] = length;
-        tmp[list.length+3] = width;
-        list=tmp;
-    } */
+    public int getNumberOfLives() {
+        return numberOfLives;
+    }
+
+    public void setNumberOfLives(int numberOfLives) {
+        this.numberOfLives = numberOfLives;
+    }
+
 }

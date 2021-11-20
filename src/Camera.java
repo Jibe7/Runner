@@ -16,6 +16,7 @@ public class Camera {
     private long pTime=0;
     private  double km=3*fm;
 
+    // UPDATE FUNCTION : UPDATES THE X AND Y POSITION OF THE CAMERA
     public void update(long time,Hero hero) { //implemented the spring on the X-axis but I didn't achieve to do it on the Y-axis (was not stable)
         if (pTime==0) pTime=time;
         deltaT = 1e-9*(time-pTime);

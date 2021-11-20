@@ -4,9 +4,9 @@ public class Foe extends AnimatedThing {
     private double xfoe;
     private double yfoe;
     private double deltaT;
-    private long pTime=0;
     private double length=72;
     private double width=104;
+
 
 
     //CONSTRUCTOR
@@ -16,7 +16,7 @@ public class Foe extends AnimatedThing {
         yfoe=ypos;
     }
 
-
+    // EMPTY UPDATE FUNCTION, EVERYTHING CONCERNING THE FOES IS DONE IN THE GAMESCENE UPDATE FUNCTION
     public void update(long time,int xcam) {
 
     }
