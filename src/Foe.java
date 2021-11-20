@@ -1,4 +1,4 @@
-import javafx.geometry.Rectangle2D;
+
 
 public class Foe extends AnimatedThing {
     private double xfoe;
